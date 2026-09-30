@@ -9,7 +9,7 @@ mkdir -p "$APP/Contents/MacOS"
 
 # Universal binary (Apple Silicon + Intel), runs on macOS 13+.
 for ARCH in arm64 x86_64; do
-    swiftc -O -target $ARCH-apple-macos13 main.swift -o build/LetClaudeWork-$ARCH
+    swiftc -O -target $ARCH-apple-macos13 *.swift -o build/LetClaudeWork-$ARCH
 done
 lipo -create build/LetClaudeWork-* -output "$APP/Contents/MacOS/LetClaudeWork"
 rm build/LetClaudeWork-*

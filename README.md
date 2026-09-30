@@ -4,7 +4,7 @@ Your screens go dark. Your Mac pretends to sleep. Claude does not.
 
 A tiny menu bar app for when an AI agent (or a build, or a 40 GB download) needs your Mac all night, but you'd rather not light up the bedroom like an airport runway.
 
-Hit **Start** and:
+Hit **Start** (or **⌃⌥⌘L** from anywhere) and:
 
 - 🖥️ **screens turn off**, instantly. No waiting for the timer.
 - ⚡ **Mac stays awake**. It's not sleeping. It's *resting its eyes*.
@@ -28,8 +28,9 @@ Click the 🌙:
 
 | Menu item | What it does |
 |---|---|
-| **Start** | Lights out, engine on |
+| **Start** `⌃⌥⌘L` | Lights out, engine on. The shortcut works from any app |
 | **Start at Login** | So you never forget to not sleep your Mac |
+| **Change Shortcut…** | Press any combo with ⌘, ⌥ or ⌃. ⌃⌥⌘L is taken? Pick your own |
 | **Quit** | Your Mac is free to nap again |
 
 ## Fine print
@@ -40,11 +41,12 @@ Click the 🌙:
 
 ## How it works
 
-~90 lines of Swift in [`main.swift`](main.swift). No magic, just four macOS APIs:
+~200 lines of Swift in [`main.swift`](main.swift) and [`Shortcut.swift`](Shortcut.swift). No magic, just five macOS APIs:
 
 - **stay awake**: an `IOPMAssertion` (a "please don't idle-sleep" note the app holds)
 - **screens off**: `pmset displaysleepnow`
 - **you're back**: `screensDidWakeNotification`, then the note is torn up
 - **start at login**: `SMAppService.mainApp`
+- **shortcut**: Carbon `RegisterEventHotKey` (old, but needs no Accessibility permission)
 
 Hacking on it: `./build.sh` builds `build/LetClaudeWork.app`, `./release.sh 1.2.3` ships a release that brew picks up.

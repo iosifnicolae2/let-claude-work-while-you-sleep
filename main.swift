@@ -7,6 +7,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let toggleItem = NSMenuItem(title: "", action: #selector(toggle), keyEquivalent: "")
     private let loginItem = NSMenuItem(title: "Start at Login", action: #selector(toggleStartAtLogin), keyEquivalent: "")
+    private let shortcutItem = NSMenuItem(title: "Change Shortcut…", action: #selector(changeShortcut), keyEquivalent: "")
+    private var shortcut = Shortcut.load()
+    private lazy var hotKey = GlobalHotKey { [weak self] in self?.toggle() }
+    private let recorder = ShortcutRecorder()
     private var sleepBlock: IOPMAssertionID = 0
     private var isRunning: Bool { sleepBlock != 0 }
 
@@ -14,9 +18,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         toggleItem.target = self
         loginItem.target = self
+        shortcutItem.target = self
         menu.addItem(toggleItem)
         menu.addItem(.separator())
         menu.addItem(loginItem)
+        menu.addItem(shortcutItem)
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate), keyEquivalent: "q"))
         statusItem.menu = menu
 
@@ -24,6 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self, selector: #selector(screensWoke),
             name: NSWorkspace.screensDidWakeNotification, object: nil)
 
+        hotKey.register(shortcut)
         refreshUI()
     }
 
@@ -62,12 +69,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshUI()
     }
 
+    @objc private func changeShortcut() {
+        hotKey.unregister()  // otherwise pressing the current shortcut would fire it instead of recording it
+        recorder.record { [weak self] pressed in
+            guard let self else { return }
+            if let pressed {
+                shortcut = pressed
+                shortcut.save()
+            }
+            hotKey.register(shortcut)
+            refreshUI()
+        }
+    }
+
     @objc private func screensWoke() {
         if isRunning { stop() }
     }
 
     private func refreshUI() {
         toggleItem.title = isRunning ? "Stop" : "Start (screens off, stay awake)"
+        toggleItem.keyEquivalent = shortcut.key
+        toggleItem.keyEquivalentModifierMask = shortcut.flags
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
         let symbol = isRunning ? "moon.zzz.fill" : "moon.zzz"
         statusItem.button?.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Let Claude Work")
