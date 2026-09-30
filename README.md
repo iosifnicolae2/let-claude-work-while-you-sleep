@@ -2,6 +2,13 @@
 
 Screens off. Mac stays awake. Claude keeps working.
 
+- 🖥️ **Screens off, instantly**: click 🌙 → **Start**, or press **⌃Esc** from any app.
+- ⚡ **Mac stays awake**: it's not sleeping, it's *resting its eyes*. Your apps keep running.
+- 🖱️ **Back in a second**: move the mouse or press a key. Screens return, normal sleep rules too.
+- ⌨️ **Your shortcut**: 🌙 → **Change Shortcut…** and press any combo you like.
+- 🚀 **Start at Login**: always there when you need it.
+- 🪶 **Tiny**: just a moon in the menu bar. No Dock icon, no windows.
+
 <img src="screenshot.png" alt="The moon menu in the menu bar" width="360">
 
 ## Install
@@ -9,14 +16,6 @@ Screens off. Mac stays awake. Claude keeps working.
 ```sh
 brew install --cask iosifnicolae2/tap/let-claude-work && open -a LetClaudeWork
 ```
-
-## Use
-
-Press **⌃Esc**, or click the 🌙 in the menu bar → **Start**.
-
-Your screens go dark and your Mac won't sleep. Move the mouse or press a key to come back.
-
-The same menu has **Start at Login** and **Change Shortcut…**
 
 ## Uninstall
 
