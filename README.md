@@ -4,7 +4,7 @@ Your screens go dark. Your Mac pretends to sleep. Claude does not.
 
 A tiny menu bar app for when an AI agent (or a build, or a 40 GB download) needs your Mac all night, but you'd rather not light up the bedroom like an airport runway.
 
-Hit **Start** (or **⌃⌥⌘L** from anywhere) and:
+Hit **Start** (or **⌃Esc** from anywhere) and:
 
 - 🖥️ **screens turn off**, instantly. No waiting for the timer.
 - ⚡ **Mac stays awake**. It's not sleeping. It's *resting its eyes*.
@@ -28,9 +28,9 @@ Click the 🌙:
 
 | Menu item | What it does |
 |---|---|
-| **Start** `⌃⌥⌘L` | Lights out, engine on. The shortcut works from any app |
+| **Start** `⌃Esc` | Lights out, engine on. The shortcut works from any app |
 | **Start at Login** | So you never forget to not sleep your Mac |
-| **Change Shortcut…** | Press any combo with ⌘, ⌥ or ⌃. ⌃⌥⌘L is taken? Pick your own |
+| **Change Shortcut…** | Press any combo with ⌘, ⌥ or ⌃. ⌃Esc is taken? Pick your own |
 | **Quit** | Your Mac is free to nap again |
 
 ## Fine print

@@ -1,15 +1,15 @@
 import AppKit
 import Carbon.HIToolbox
 
-/// A key combo like ⌃⌥⌘L, saved in UserDefaults.
+/// A key combo like ⌃Esc, saved in UserDefaults.
 struct Shortcut: Codable {
     var keyCode: UInt16
     var key: String
     var modifiers: UInt
 
     static let standard = Shortcut(
-        keyCode: UInt16(kVK_ANSI_L), key: "l",
-        modifiers: NSEvent.ModifierFlags([.control, .option, .command]).rawValue)
+        keyCode: UInt16(kVK_Escape), key: "\u{1b}",
+        modifiers: NSEvent.ModifierFlags.control.rawValue)
 
     /// Nil unless the key press includes ⌘, ⌥ or ⌃, so plain typing can't become a shortcut.
     init?(event: NSEvent) {
