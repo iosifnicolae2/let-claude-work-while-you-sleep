@@ -9,6 +9,8 @@ Screens off. Mac stays awake. Claude keeps working.
 - 🚀 **Start at Login**: always there when you need it.
 - 🪶 **Tiny**: lives quietly in the menu bar. No Dock icon, no windows.
 
+## Screenshot
+
 <img src="screenshot.png" alt="The moon menu in the menu bar" width="360">
 
 ## Install
