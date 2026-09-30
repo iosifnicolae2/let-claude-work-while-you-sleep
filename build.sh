@@ -29,7 +29,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-# Ad-hoc signature so macOS accepts it as a login item.
-codesign --force --sign - "$APP"
+# Developer ID (Bringes team) when this Mac has it, needed for notarization. Otherwise ad-hoc, fine for local use.
+IDENTITY=$(security find-identity -v -p codesigning | grep -o '"Developer ID Application: .*(CKFK7S3569)"' | head -1 | tr -d '"')
+if [ -n "$IDENTITY" ]; then
+    codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
+else
+    codesign --force --sign - "$APP"
+fi
 
 echo "Built $APP"
