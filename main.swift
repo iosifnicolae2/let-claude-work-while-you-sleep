@@ -87,7 +87,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshUI() {
-        toggleItem.title = isRunning ? "Stop" : "Start (screens off, stay awake)"
+        toggleItem.title = isRunning ? "Wake Up" : "Pretend to Sleep"
         toggleItem.keyEquivalent = shortcut.key
         toggleItem.keyEquivalentModifierMask = shortcut.flags
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
