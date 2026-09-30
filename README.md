@@ -12,13 +12,15 @@ Hit **Start** and:
 
 No Dock icon. No window. No settings. No subscription. Just a moon quietly judging you from the menu bar.
 
+<img src="screenshot.png" alt="The moon menu: Start, Start at Login, Quit" width="360">
+
 ## Install
 
 ```sh
-git clone https://github.com/iosifnicolae2/let-claude-work-while-you-sleep && cd let-claude-work-while-you-sleep && ./install.sh
+brew install --cask iosifnicolae2/tap/let-claude-work && open -a LetClaudeWork
 ```
 
-Compiles from source, drops the app in `/Applications`, starts it. Needs Xcode Command Line Tools (`xcode-select --install`) if you don't have them already.
+146 KB. Apple Silicon and Intel. No Xcode needed. Bye with `brew uninstall --cask let-claude-work`.
 
 ## Use
 
@@ -44,3 +46,5 @@ Click the 🌙:
 - **screens off**: `pmset displaysleepnow`
 - **you're back**: `screensDidWakeNotification`, then the note is torn up
 - **start at login**: `SMAppService.mainApp`
+
+Hacking on it: `./build.sh` builds `build/LetClaudeWork.app`, `./release.sh 1.2.3` ships a release that brew picks up.
