@@ -32,6 +32,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         hotKey.register(shortcut)
         refreshUI()
+        showMenuOnFirstRun()
+    }
+
+    /// Right after install, open the menu so people see where the app lives.
+    private func showMenuOnFirstRun() {
+        let key = "didShowMenuOnFirstRun"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        UserDefaults.standard.set(true, forKey: key)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.statusItem.button?.performClick(nil)
+        }
     }
 
     @objc private func toggle() {
