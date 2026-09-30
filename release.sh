@@ -8,13 +8,16 @@ APP=build/LetClaudeWork.app
 ZIP=build/LetClaudeWork.zip
 VERSION=$VERSION ./build.sh
 
-codesign -dv "$APP" 2>&1 | grep -q "Authority=Developer ID Application" ||
-    { echo "Not signed with Developer ID. Create the certificate in Xcode first."; exit 1; }
+ditto -c -k --keepParent "$APP" "$ZIP"
 
-# Apple scans the app, then the approval is stapled to it so it opens even offline.
-ditto -c -k --keepParent "$APP" "$ZIP"
-xcrun notarytool submit "$ZIP" --keychain-profile notary --wait
-xcrun stapler staple "$APP"
-ditto -c -k --keepParent "$APP" "$ZIP"
+# Signed with Developer ID: Apple scans it, and the approval is stapled on so it opens even offline.
+# Unsigned: still works through brew, which clears the "downloaded from the internet" flag.
+if codesign -dv "$APP" 2>&1 | grep -q "Authority=Developer ID Application"; then
+    xcrun notarytool submit "$ZIP" --keychain-profile notary --wait
+    xcrun stapler staple "$APP"
+    ditto -c -k --keepParent "$APP" "$ZIP"
+else
+    echo "Not signed with Developer ID: publishing without notarization."
+fi
 
 gh release create "v$VERSION" "$ZIP" --title "v$VERSION" --notes "brew install --cask iosifnicolae2/tap/let-claude-work"
