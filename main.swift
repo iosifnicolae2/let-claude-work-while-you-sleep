@@ -8,15 +8,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let toggleItem = NSMenuItem(title: "", action: #selector(toggle), keyEquivalent: "")
     private let loginItem = NSMenuItem(title: "Start at Login", action: #selector(toggleStartAtLogin), keyEquivalent: "")
     private let shortcutItem = NSMenuItem(title: "Change Shortcut…", action: #selector(changeShortcut), keyEquivalent: "")
-    private let unlockedItem = NSMenuItem(title: "Keep Unlocked (dim screens instead)", action: #selector(toggleKeepUnlocked), keyEquivalent: "")
     private var shortcut = Shortcut.load()
     private lazy var hotKey = GlobalHotKey { [weak self] in self?.toggle() }
     private let recorder = ShortcutRecorder()
     private lazy var blackout = Blackout { [weak self] in self?.stop() }
-    private var keepUnlocked: Bool {
-        get { UserDefaults.standard.object(forKey: "keepUnlocked") as? Bool ?? true }
-        set { UserDefaults.standard.set(newValue, forKey: "keepUnlocked") }
-    }
     private var sleepBlock: IOPMAssertionID = 0
     private var isRunning: Bool { sleepBlock != 0 }
 
@@ -25,18 +20,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         toggleItem.target = self
         loginItem.target = self
         shortcutItem.target = self
-        unlockedItem.target = self
         menu.addItem(toggleItem)
         menu.addItem(.separator())
-        menu.addItem(unlockedItem)
         menu.addItem(loginItem)
         menu.addItem(shortcutItem)
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate), keyEquivalent: "q"))
         statusItem.menu = menu
-
-        NSWorkspace.shared.notificationCenter.addObserver(
-            self, selector: #selector(screensWoke),
-            name: NSWorkspace.screensDidWakeNotification, object: nil)
 
         hotKey.register(shortcut)
         refreshUI()
@@ -67,7 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Short pause so the click that opened the menu doesn't wake the screens right away.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self, isRunning else { return }
-            keepUnlocked ? blackout.show() : turnScreensOff()
+            blackout.show()
         }
     }
 
@@ -76,11 +65,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         blackout.hide()
         IOPMAssertionRelease(sleepBlock)
         sleepBlock = 0
-        refreshUI()
-    }
-
-    @objc private func toggleKeepUnlocked() {
-        keepUnlocked.toggle()
         refreshUI()
     }
 
@@ -111,26 +95,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @objc private func screensWoke() {
-        if isRunning { stop() }
-    }
-
     private func refreshUI() {
         toggleItem.title = isRunning ? "Stop" : "Start (Screens off, Claude keeps working)"
         toggleItem.keyEquivalent = shortcut.key
         toggleItem.keyEquivalentModifierMask = shortcut.flags
-        unlockedItem.state = keepUnlocked ? .on : .off
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
         let symbol = isRunning ? "moon.zzz.fill" : "moon.zzz"
         statusItem.button?.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Let Claude Work")
     }
-}
-
-private func turnScreensOff() {
-    let pmset = Process()
-    pmset.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
-    pmset.arguments = ["displaysleepnow"]
-    try? pmset.run()
 }
 
 MainActor.assumeIsolated {
