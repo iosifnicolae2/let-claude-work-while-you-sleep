@@ -14,8 +14,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var blackout = Blackout { [weak self] in self?.stop() }
     private var sleepBlock: IOPMAssertionID = 0
     private var isRunning: Bool { sleepBlock != 0 }
+    private var signalSources: [DispatchSourceSignal] = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Blackout.turnBackOn()
+        stopOnSignals()
         let menu = NSMenu()
         toggleItem.target = self
         loginItem.target = self
@@ -30,6 +33,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKey.register(shortcut)
         refreshUI()
         showMenuOnFirstRun()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        stop()
+    }
+
+    /// Quit from outside (kill, logout, an upgrade): turn the screens back on first.
+    private func stopOnSignals() {
+        signalSources = [SIGTERM, SIGINT, SIGHUP].map { signalNumber in
+            signal(signalNumber, SIG_IGN)
+            let source = DispatchSource.makeSignalSource(signal: signalNumber, queue: .main)
+            source.setEventHandler { [weak self] in
+                self?.stop()
+                exit(0)
+            }
+            source.resume()
+            return source
+        }
     }
 
     /// Right after install, open the menu so people see where the app lives.
